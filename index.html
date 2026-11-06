@@ -1400,11 +1400,14 @@ section[id]{scroll-margin-top:84px}
 }
 .modal-close:hover{border-color:var(--gold);transform:rotate(90deg)}
 .modal-img-col{
-  background:var(--bg-2);
-  min-height:280px;
+  background-color:var(--bg-2);
+  background-image:var(--im);
   background-size:cover;
   background-position:center;
+  min-height:280px;
+  border-radius:var(--radius-xl) 0 0 var(--radius-xl);
 }
+@media (max-width:680px){.modal-img-col{border-radius:var(--radius-xl) var(--radius-xl) 0 0;min-height:220px}}
 .modal-info-col{
   padding:clamp(24px, 4vw, 36px);
   display:flex;
@@ -2959,7 +2962,13 @@ footer .wrap{
     if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
     document.documentElement.style.overflow = '';
   }
-  if (menuToggle) menuToggle.addEventListener('click', openNav);
+  if (menuToggle) menuToggle.addEventListener('click', function() {
+    if (mobileNav && mobileNav.classList.contains('open')) {
+      closeNav();
+    } else {
+      openNav();
+    }
+  });
   if (menuClose) menuClose.addEventListener('click', closeNav);
   if (mobileNav) {
     mobileNav.addEventListener('click', function(e) {
@@ -3335,8 +3344,6 @@ footer .wrap{
     var heart = card.getAttribute('data-heart') || 'Zərif və dolğun kompozisiya';
     var base = card.getAttribute('data-base') || 'Davamlı, unudulmaz şleyf';
     var imgClass = card.getAttribute('data-img-class') || '';
-    var media = card.querySelector('.pc-media');
-    var imStyle = media ? media.style.getPropertyValue('--im') : '';
 
     if (qvTag) qvTag.textContent = cat;
     if (qvTitle) qvTitle.textContent = name;
@@ -3352,15 +3359,19 @@ footer .wrap{
     }
 
     if (qvImg) {
-      qvImg.className = 'modal-img-col ' + (imgClass || '');
-      if (imStyle) {
-        qvImg.style.setProperty('--im', imStyle);
-        qvImg.classList.add('pim');
-      } else {
-        qvImg.style.removeProperty('--im');
-      }
-    }
+  qvImg.className = 'modal-img-col';
+  qvImg.style.backgroundImage = 'none';
 
+  var media = card.querySelector('.pc-media');
+
+  if (media) {
+    var computedImage = window.getComputedStyle(media).backgroundImage;
+
+    if (computedImage && computedImage !== 'none') {
+      qvImg.style.backgroundImage = computedImage;
+    }
+  }
+}
     if (qvOrder) {
       qvOrder.href = 'https://www.instagram.com/beria_parfume/';
       qvOrder.textContent = name + ' — Sifariş Et →';
